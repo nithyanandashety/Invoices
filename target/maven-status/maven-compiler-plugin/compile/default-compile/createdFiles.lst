@@ -1,0 +1,12 @@
+io\dropwizard\invoices\entity\Invoice.class
+io\dropwizard\invoices\dto\ProcessInvoiceDto.class
+io\dropwizard\invoices\service\imp\InvoiceServiceImplementation.class
+io\dropwizard\invoices\dto\PayingInvoiceDto.class
+io\dropwizard\invoices\dto\CreatingInvoiceDto.class
+io\dropwizard\invoices\enums\InvoiceEnum.class
+io\dropwizard\invoices\service\ServiceInterface.class
+io\dropwizard\invoices\resources\InvoiceResources.class
+io\dropwizard\invoices\InvoicesConfiguration.class
+io\dropwizard\invoices\repository\InvoiceRepo.class
+io\dropwizard\invoices\dao\InvoiceDao.class
+io\dropwizard\invoices\InvoicesApplication.class
