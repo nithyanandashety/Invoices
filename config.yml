@@ -8,3 +8,5 @@ database:
    user: postgres
    password: 12345
    url: 'jdbc:postgresql://localhost:5432/Invoices'
+swagger:
+   resourcePackage: io.dropwizard.invoices.resources

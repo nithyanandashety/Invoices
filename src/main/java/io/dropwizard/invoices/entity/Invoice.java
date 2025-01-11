@@ -16,7 +16,7 @@ public class Invoice {
 	private Date dueDate;
 	private Double paidAmount;
 	private InvoiceEnum status;
-//	
+	
 //	public Invoice(Integer id, Double amount,Date dueDtae, Double paidAmount,InvoiceEnum status) {
 //		this.id=id;
 //		this.amount =amount;

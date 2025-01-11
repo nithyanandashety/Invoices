@@ -20,7 +20,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.Status;
 
-@Path("/invoice")
+@Path("/invoices")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class InvoiceResources {
@@ -32,7 +32,6 @@ public class InvoiceResources {
 	}
 
 	@POST
-	@Path("/addInvoice")
 	public Response addInvoiceDetails(CreatingInvoiceDto invoice) {
 		{
 			try {
@@ -46,7 +45,6 @@ public class InvoiceResources {
 	}
 
 	@GET
-	@Path("/getInvoice")
 	public Response getAllInvoice() {
 		{
 			try {
@@ -60,10 +58,9 @@ public class InvoiceResources {
 	}
 
 	@POST
-	@Path("/{id}/payment")
+	@Path("/{id}/payments")
 	public Response updatePayingInvoice(@PathParam("id") int id, PayingInvoiceDto payingInvoiceDto) {
 		payingInvoiceDto.setId(id);
-	System.out.println(payingInvoiceDto);
 		try {
 			Map<String, String> paying = invoiceServiceImplementation.updateAmount(payingInvoiceDto);
 			return Response.status(Status.OK).entity(paying).build();

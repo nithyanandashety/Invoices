@@ -1,3 +1,4 @@
-user: postgres
-password: 12345
-url: 'jdbc:postgresql://localhost:5432/testings'
+
+jdbc.url: jdbc:postgresql://localhost:5432/testings
+jdbc.login: postgres
+jdbc.password: 12345

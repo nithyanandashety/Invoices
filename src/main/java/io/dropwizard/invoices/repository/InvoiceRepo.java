@@ -2,13 +2,11 @@ package io.dropwizard.invoices.repository;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang3.time.DateUtils;
 import org.dalesbred.Database;
 import org.dalesbred.query.SqlQuery;
 
@@ -18,7 +16,6 @@ import com.google.common.io.Resources;
 import io.dropwizard.invoices.dao.InvoiceDao;
 import io.dropwizard.invoices.dto.CreatingInvoiceDto;
 import io.dropwizard.invoices.dto.PayingInvoiceDto;
-import io.dropwizard.invoices.dto.ProcessInvoiceDto;
 import io.dropwizard.invoices.entity.Invoice;
 import io.dropwizard.invoices.enums.InvoiceEnum;
 
@@ -43,9 +40,9 @@ public class InvoiceRepo implements InvoiceDao {
 		return database.findUnique(Invoice.class, GET_INVOICE, id);
 	}
 
-	
-	private void updateStatus(Invoice invoice, int id) {
-		
+	@Override
+	public void updateStatus(Invoice invoice, int id) {
+
 		final String UPDATE_STATUS = "UPDATE INVOICE SET status = :status WHERE id = :id";
 
 		Map<String, Object> parameters = new HashMap<>();
@@ -66,6 +63,7 @@ public class InvoiceRepo implements InvoiceDao {
 		}
 	}
 
+	@Override
 	public Invoice addInvoice(CreatingInvoiceDto addInvoice) {
 		final String ADD_INVOICE = "INSERT INTO INVOICE (amount, due_date) VALUES (:amount, :dueDate) RETURNING *";
 
@@ -78,6 +76,7 @@ public class InvoiceRepo implements InvoiceDao {
 		return createdInvoice;
 	}
 
+	@Override
 	public List<Invoice> getAllInvoices() {
 		final String GET_ALL_INVOICES = "SELECT * FROM INVOICE";
 		List<Invoice> allInvoices = database.findAll(Invoice.class, GET_ALL_INVOICES);
@@ -85,6 +84,7 @@ public class InvoiceRepo implements InvoiceDao {
 		return allInvoices;
 	}
 
+	@Override
 	public void updateAmount(PayingInvoiceDto invoiceDetails) throws Exception {
 		final String UPDATE_AMOUNT = "UPDATE INVOICE SET paid_amount = :paidAmount, status = :status, amount = :amount WHERE id = :id";
 
@@ -106,42 +106,12 @@ public class InvoiceRepo implements InvoiceDao {
 
 	}
 
-	public List<Invoice> processOverdue(ProcessInvoiceDto processDue) {
-		final String GET_PROCESS_OVERDUE = "SELECT * FROM INVOICE WHERE due_date < :currentDate AND status = 'PENDING'";
+	@Override
+	public List<Invoice> processOverdue(Date date) {
+		final String GET_PROCESS_OVERDUE = "SELECT * FROM INVOICE WHERE due_date <? AND status = 'PENDING'";
 
-		Date currentDate = new Date();
-
-		Map<String, Object> parameters = new HashMap<>();
-		parameters.put("currentDate", currentDate);
-
-		List<Invoice> overdueInvoices = database.findAll(Invoice.class,
-				SqlQuery.namedQuery(GET_PROCESS_OVERDUE, parameters));
-
-		List<Invoice> addedInvoices = createAndUpdateInvoices(overdueInvoices, processDue);
-
-		return addedInvoices;
+		return database.findAll(Invoice.class, SqlQuery.query(GET_PROCESS_OVERDUE, date));
 
 	}
 
-	private Date addDays(int days) {
-		Date currDate = new Date();
-		currDate = DateUtils.addDays(currDate, days);
-
-		return currDate;
-	}
-
-	private List<Invoice> createAndUpdateInvoices(List<Invoice> overDues, ProcessInvoiceDto processDue) {
-
-		List<Invoice> addedInvoices = new ArrayList<>();
-
-		for (Invoice invoice : overDues) {
-			updateStatus(invoice, invoice.getId());
-
-			Invoice addedInvoice = this.addInvoice(new CreatingInvoiceDto(invoice.getAmount() + processDue.getLateFee(),
-					addDays(processDue.getOverdue())));
-			addedInvoices.add(addedInvoice);
-		}
-
-		return addedInvoices;
-	}
 }
